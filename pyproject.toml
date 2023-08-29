@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "war-challenge-ml"
+version = "0.1.0"
+description = ""
+authors = ["Otávio Almeida <otavioalmeida650@gmail.com>"]
+readme = "README.md"
+packages = [{include = "war_challenge_ml"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

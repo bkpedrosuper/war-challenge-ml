@@ -4,10 +4,14 @@ version = "0.1.0"
 description = ""
 authors = ["Otávio Almeida <otavioalmeida650@gmail.com>"]
 readme = "README.md"
-packages = [{include = "war_challenge_ml"}]
+packages = [
+    { include = "war_challenge_ml" },
+    { include = "../war-challenge-computer-vision/war_challenge_computer_vision" },
+]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+war-challenge-computer-vision = { path = "../war-challenge-computer-vision", develop = true }
 
 
 [build-system]

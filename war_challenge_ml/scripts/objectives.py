@@ -43,7 +43,7 @@ class ObjectiveData():
         self.territory_count = territory_count
         self.troops_per_territory = troops_per_territory
 
-    def generate_base_weights(self):
+    def generate_base_weights(self,):
         match self.conquertype:
             case Conquer.CONTINENT:
                 pass
@@ -69,8 +69,8 @@ class Objective(Enum):
     Conquer_ASIA_AFRICA = ObjectiveData(Conquer.CONTINENT,continents=[Continent.ASIA, Continent.AFRICA])
     Conquer_24_territories = ObjectiveData(Conquer.TERRITORY,territory_count=24)
     ConquerBlue = ObjectiveData(Conquer.ARMY,army=Army.BLUE)
-    ConquerYellow = ObjectiveData(Conquer.ARMY,Army.YELLOW)
-    ConquerRed = ObjectiveData(Conquer.ARMY,Army.RED)
-    ConquerBlack = ObjectiveData(Conquer.ARMY,Army.BLACK)
-    ConquerWhite = ObjectiveData(Conquer.ARMY,Army.WHITE)
-    ConquerGreen = ObjectiveData(Conquer.ARMY,Army.GREEN)
+    ConquerYellow = ObjectiveData(Conquer.ARMY,army=Army.YELLOW)
+    ConquerRed = ObjectiveData(Conquer.ARMY,army=Army.RED)
+    ConquerBlack = ObjectiveData(Conquer.ARMY,army=Army.BLACK)
+    ConquerWhite = ObjectiveData(Conquer.ARMY,army=Army.WHITE)
+    ConquerGreen = ObjectiveData(Conquer.ARMY,army=Army.GREEN)

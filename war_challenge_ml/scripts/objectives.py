@@ -84,10 +84,10 @@ class Objective(Enum):
     Conquer_ASIA_AFRICA = ObjectiveData(
         Conquer.CONTINENT, continents=[Continent.ASIA, Continent.AFRICA]
     )
-    Conquer_24_territories = ObjectiveData(Conquer.TERRITORY, territory_count=24)
-    ConquerBlue = ObjectiveData(Conquer.ARMY, army=Army.BLUE)
-    ConquerYellow = ObjectiveData(Conquer.ARMY, army=Army.YELLOW)
-    ConquerRed = ObjectiveData(Conquer.ARMY, army=Army.RED)
-    ConquerBlack = ObjectiveData(Conquer.ARMY, army=Army.BLACK)
-    ConquerWhite = ObjectiveData(Conquer.ARMY, army=Army.WHITE)
-    ConquerGreen = ObjectiveData(Conquer.ARMY, army=Army.GREEN)
+    CONQUER_24_TERRITORIES = ObjectiveData(Conquer.TERRITORY, territory_count=24)
+    CONQUER_BLUE = ObjectiveData(Conquer.ARMY, army=Army.BLUE)
+    CONQUER_YELLOW = ObjectiveData(Conquer.ARMY, army=Army.YELLOW)
+    CONQUER_RED = ObjectiveData(Conquer.ARMY, army=Army.RED)
+    CONQUER_BLACK = ObjectiveData(Conquer.ARMY, army=Army.GRAY)
+    CONQUER_WHITE = ObjectiveData(Conquer.ARMY, army=Army.PURPLE)
+    CONQUER_GREEN = ObjectiveData(Conquer.ARMY, army=Army.GREEN)

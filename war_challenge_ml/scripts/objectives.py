@@ -43,11 +43,17 @@ class ObjectiveData():
         self.territory_count = territory_count
         self.troops_per_territory = troops_per_territory
 
-    def generate_base_weights(self,):
+    def generate_base_weights(self,factors=[0.1,0.2,0.4,0.6,0.8,1.0]):
+        weights = [0 for _ in range(len(Continent))]
         match self.conquertype:
             case Conquer.CONTINENT:
+            #     for region in Region:
+            #         if region.value.continent in self.continents:
+
+            #             weights[Region.idx] = factors[-1]
+            #         elif region.value.
                 pass
-        
+ 
             case Conquer.CONTINENT_PLUS_ONE:
                 pass
 

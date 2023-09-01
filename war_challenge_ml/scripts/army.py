@@ -4,8 +4,8 @@ from enum import Enum
 class ArmyData():
     idx = 0
     def __init__(self) -> None:
-        ArmyData.idx +=1 
         self.idx= ArmyData.idx
+        ArmyData.idx +=1 
 
 
 class Army(Enum):

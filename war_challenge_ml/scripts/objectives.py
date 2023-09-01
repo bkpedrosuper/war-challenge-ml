@@ -1,4 +1,4 @@
-from war_challenge_computer_vision.regions.regions import RegionData,ContinentData,Continent,Region
+from war_challenge_computer_vision.regions.regions import RegionData, ContinentData, Continent, Region
 from army import Army,ArmyData
 from enum import Enum
 
@@ -7,8 +7,8 @@ class ConquerData:
     idx = 0
 
     def __init__(self):
-        ConquerData.idx += 1
         self.idx = ContinentData.idx
+        ConquerData.idx += 1
 
 class Conquer(Enum):
     CONTINENT  = ConquerData()
@@ -32,8 +32,9 @@ class ObjectiveData():
                  army = None,
                  territory_count=0,
                  troops_per_territory=1):
-        ObjectiveData.idx +=1
+        
         self.idx = RegionData.idx
+        ObjectiveData.idx +=1
         
         self.conquertype = conquertype
         self.continents = continents
@@ -42,14 +43,22 @@ class ObjectiveData():
         self.territory_count = territory_count
         self.troops_per_territory = troops_per_territory
 
-    # def generate_base_weights(self):
-    #     match self.conquertype:
-    #         case Conquer.CONTINENT:
+    def generate_base_weights(self):
+        match self.conquertype:
+            case Conquer.CONTINENT:
+                pass
+        
+            case Conquer.CONTINENT_PLUS_ONE:
+                pass
 
+            case Conquer.TERRITORY:
+                pass
+
+            case Conquer.ARMY:
+                pass
             
-    #         case ConquerType.CONTINENT_PLUS_ONE:
-
-    #         case ConquerType.
+            case _:
+                pass
 
 
 class Objective(Enum):

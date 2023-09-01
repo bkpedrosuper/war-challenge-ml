@@ -12,6 +12,7 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.11"
 war-challenge-computer-vision = { path = "../war-challenge-computer-vision", develop = true }
+ipykernel = "^6.25.1"
 
 
 [build-system]

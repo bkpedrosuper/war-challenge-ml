@@ -38,7 +38,6 @@ class ObjectiveData():
         self.territory_count = territory_count
         self.troops_per_territory = troops_per_territory
 
-    
 
     # def generate_base_weights(self):
     #     match self.conquertype:

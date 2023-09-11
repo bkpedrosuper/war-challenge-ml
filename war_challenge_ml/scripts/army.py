@@ -13,5 +13,5 @@ class Army(Enum):
     YELLOW = ArmyData()
     RED = ArmyData()
     GRAY = ArmyData()
-    PURPLE = ArmyData()
+    WHITE = ArmyData()
     GREEN = ArmyData()

@@ -1,16 +1,21 @@
 from war_challenge_computer_vision.regions.regions import Region, RegionData
 from scripts.army import Army, ArmyData, armydict
 
+
 class RegionState:
     army: ArmyData
     region: RegionData
+    borders: list["RegionState"]
 
-    def __init__(self, name: str, region: RegionData, army=Army.NONE.value, troops=0):
+    def __init__(
+        self, name: str, region: RegionData, army=Army.NONE.value, troops=0, borders=[]
+    ):
         self.name = name
         self.value = region
         self.idx = region.idx
         self.army = army
         self.troops = troops
+        self.borders = borders
 
 
 class WorldState:
@@ -20,9 +25,16 @@ class WorldState:
         self.regionDict = {
             region.name: RegionState(region.name, region.value) for region in Region
         }
+        self.set_borders()
+
+    def set_borders(self):
+        for regionState in self.regionDict.values():
+            regionState.borders = [
+                self.regionDict[border.name] for border in regionState.value.borders
+            ]
 
     def getRegionState(self):
-        return self.regionDict.values()
+        return list(self.regionDict.values())
 
     def update(self, computer_vision_data):
         for regionState in self.getRegionState():

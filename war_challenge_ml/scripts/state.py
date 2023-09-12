@@ -56,7 +56,6 @@ class WorldState:
                 # )
                 # print("region", region, "type", type(region))
                 if regionState.name == region.name:
-                    print("entroooo")
                     troops = elemento[1]
                     color = elemento[2]
                     regionState.army = armydict[color].value

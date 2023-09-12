@@ -82,7 +82,7 @@ class Objective(Enum):
     CONQUER_YELLOW = ObjectiveData(Conquer.ARMY, army=Army.YELLOW)
     CONQUER_RED = ObjectiveData(Conquer.ARMY, army=Army.RED)
     CONQUER_BLACK = ObjectiveData(Conquer.ARMY, army=Army.GRAY)
-    CONQUER_WHITE = ObjectiveData(Conquer.ARMY, army=Army.WHITE)
+    CONQUER_PURPLE = ObjectiveData(Conquer.ARMY, army=Army.PURPLE)
     CONQUER_GREEN = ObjectiveData(Conquer.ARMY, army=Army.GREEN)
 
 

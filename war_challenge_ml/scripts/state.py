@@ -2,6 +2,7 @@ from war_challenge_computer_vision.regions.regions import Region, RegionData
 from scripts.army import Army, ArmyData, armydict
 
 
+
 class RegionState:
     army: ArmyData
     region: RegionData

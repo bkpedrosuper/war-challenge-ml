@@ -64,16 +64,16 @@ class ObjectiveData:
 
 
 class Objective(Enum):
-    Conquer_EU_OCEANIA = ObjectiveData(
+    CCONQUER_EU_OCEANIA = ObjectiveData(
         Conquer.CONTINENT, continents=[Continent.EU, Continent.OCEANIA]
     )
-    Conquer_ASIA_SA = ObjectiveData(
+    CONQUER_ASIA_SA = ObjectiveData(
         Conquer.CONTINENT, continents=[Continent.ASIA, Continent.SA]
     )
-    Conquer_EU_SA_PLUS_ONE = ObjectiveData(
+    CONQUER_EU_SA_PLUS_ONE = ObjectiveData(
         Conquer.CONTINENT_PLUS_ONE, continents=[Continent.EU, Continent.SA]
     )
-    Conquer_18_territories_2_troops = ObjectiveData(
+    CONQUER_18_TERRITORIES_2_TROOPS = ObjectiveData(
         Conquer.TERRITORY, territory_count=18, troops_per_territory=2
     )
     Conquer_ASIA_AFRICA = ObjectiveData(

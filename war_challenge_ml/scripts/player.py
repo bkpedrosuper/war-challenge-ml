@@ -55,3 +55,4 @@ class Player:
                         print('Enemy Power ',Enemy_power)
             flag += 1
         return conquer
+#teste

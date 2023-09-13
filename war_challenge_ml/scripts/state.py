@@ -1,7 +1,6 @@
 from war_challenge_computer_vision.regions.regions import Region, RegionData
 from scripts.army import Army, ArmyData, armydict
-
-
+from scripts.objectives import Objective, ObjectiveData, Conquer, ConquerData
 
 class RegionState:
     army: ArmyData
@@ -17,6 +16,7 @@ class RegionState:
         self.army = army
         self.troops = troops
         self.borders = borders
+        self.default_weight = -99999.9
 
 
 class WorldState:
@@ -27,12 +27,18 @@ class WorldState:
             region.name: RegionState(region.name, region.value) for region in Region
         }
         self.set_borders()
+        self.worldLen = self.regionDict.__len__()
 
     def set_borders(self):
         for regionState in self.regionDict.values():
             regionState.borders = [
                 self.regionDict[border.name] for border in regionState.value.borders
             ]
+
+    def set_default_weights(self, weigths: list[float]):
+        """Given a list of weights, set regionState default_weight based on idx"""
+        for regionState in self.getRegionState():
+            regionState.default_weight = weigths[regionState.idx]
 
     def getRegionState(self):
         return list(self.regionDict.values())
@@ -61,4 +67,5 @@ class WorldState:
                     color = elemento[2]
                     regionState.army = armydict[color].value
                     regionState.troops = troops
+    
         print("(WorldState) updated")

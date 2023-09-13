@@ -19,6 +19,7 @@ class RegionState:
         self.default_weight = -99999.9
 
 
+
 class WorldState:
     regionDict: dict[str, RegionState]
 

@@ -25,5 +25,6 @@ armydict = {
     'firebrick':Army.RED,
     'darkslategray':Army.GRAY,
     'darkslateblue':Army.PURPLE,
-    'olivedrab':Army.GREEN
+    'olivedrab':Army.GREEN,
+    'indigo': Army.PURPLE
 }

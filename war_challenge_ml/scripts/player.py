@@ -47,6 +47,8 @@ class Player:
             for Search_Ally in self.worldState.getRegionState():
                 # print(flag)
                 # print(Search_Ally.army.tag,'',self.army.tag)
+                
+
                 if (
                     Search_Ally.army.tag == self.army.tag and Search_Ally.troops > 1
                 ):  # Possivel
@@ -60,6 +62,9 @@ class Player:
                             Ally_power += search_Ally_Ally.troops
 
                     for search_Enemy in self.worldState.getRegionState()[flag].borders:
+                        if (search_Enemy.troops > Search_Ally.troops - 2):
+                            continue
+
                         #print("####Enemy ", search_Enemy.name)
                         if search_Enemy.army.tag != self.army.tag:
                             # print("Entrou 4")
@@ -82,13 +87,15 @@ class Player:
                             conquer.append((Search_Ally.name, search_Enemy.name, fit_value)) # type: ignore # noqa: E501
                             #print("Enemy Power ", Enemy_power)
                 flag += 1
-
-            best = conquer[0]
-            for elemento in conquer:
-                if elemento[2] > best[2]:
-                    elemento = best
-            self.iteration -=1
-            print(best[0] + ' ataca ' +best[1])
+            if len(conquer) ==0:
+                print('finaliza ataque')
+            else:
+                best = conquer[0]
+                for elemento in conquer:
+                    if elemento[2] > best[2]:
+                        elemento = best
+                self.iteration -=1
+                print(best[0] + ' ataca ' +best[1])
         else:
             self.iteration = self.range_random()
             print('finaliza ataque')

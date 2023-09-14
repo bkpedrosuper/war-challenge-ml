@@ -120,7 +120,8 @@ class Player:
             for regionPosition, regionState in enumerate(self.worldState.getRegionState()):
                 if self.is_mine(regionState):
                     # print(Search_Ally.name)
-                    fortification = float(regionState.troops)
+                    #Calcula a fortificação base, as primeiras 3 tropas tem fortificação x2 pois adicionam mais dados
+                    fortification = float(min(regionState.troops,3))*2.0 + float(max(regionState.troops-3,0))
                     for border in regionState.borders:  # noqa: E501
                         if self.is_mine(border):
                             # Calcula fortificação
@@ -145,7 +146,8 @@ class Player:
             chosen_movements = sorted(best_moviments,key=lambda x: x[3],reverse=True)
             chosen_movements = chosen_movements[-self.range_random():]
             for best_moviment in chosen_movements:
-                best_moviment_text = best_moviment[0].name + ' -('+str(best_moviment[2]) + ')-> ' + best_moviment[1].name
+                if best_moviment[2] > 0:
+                    best_moviment_text = best_moviment[0].name + ' -('+str(best_moviment[2]) + ')-> ' + best_moviment[1].name
                 print(best_moviment_text)
             self.iteration -=1
         else:

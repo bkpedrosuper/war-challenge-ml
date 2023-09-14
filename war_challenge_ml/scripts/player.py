@@ -128,7 +128,7 @@ class Player:
                             # Criando possíveis alternativas e restrições
                             if regionState.troops > 1:
                                 moviments.append(
-                                    (regionState, border, (1, regionState.troops))
+                                    (regionState, border, (0, regionState.troops))
                                 )
                         #caso inimigo
                         else:
@@ -150,11 +150,13 @@ class Player:
 
             chosen_movements = sorted(best_moviments, key=lambda x: x[3], reverse=True)
             print('chosen movements:',chosen_movements)
-            chosen_movements = chosen_movements[:self.range_random()]
+            #chosen_movements = chosen_movements[:self.range_random()]
             for el in chosen_movements:
                 if el[2] > 0:
                     print(el[0].name," -(",str(el[2]),")-> ",el[1].name)
             self.iteration -= 1
+            print('finaliza movimentação')
+
         else:
             self.iteration = self.range_random()
             best_moviment_text = "finaliza movimentação"
@@ -169,12 +171,12 @@ class Player:
         fortification: np.ndarray,
     ):
         best_fit = -9999
-        best_troop = 0
+        best_troop = -1
         print('troop_Range',troop_range)
         for troop in range(*troop_range):
             """Calcula a origem e destino das tropas e respectivos valores pensando mais as 3 primeiras tropas"""
             origin_troops = stateOrigin.troops - troop
-            destination_troops = stateDestination.troops - troop
+            destination_troops = stateDestination.troops + troop
             origin_fortification = (
                 float(min(origin_troops, 3)) * 2.0
                 + float(max(origin_troops - 3, 0))

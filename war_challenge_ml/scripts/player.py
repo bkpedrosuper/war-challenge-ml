@@ -104,62 +104,56 @@ class Player:
         answer = regionState.army.tag == self.army.tag
         return answer
 
-    def move(self):
+    def move(self,debug=False):
         """Calculo da defesa dos territórios"""
         # Buscamos territórios que são nossos aliados
         best_moviment_text = ""
         best_moviments = []
         # Calculo das fortificações e dos movimentos
         if self.iteration > 0:
-            moviments = []
-            regionFortification = np.array(
+            neighboorFortification = np.array(
                 [0.0 for _ in range(self.worldState.worldLen)]
             )
             for regionPosition, regionState in enumerate(
                 self.worldState.getRegionState()
             ):
                 if self.is_mine(regionState):
-                    # print(Search_Ally.name)
-                    # Calcula a fortificação base, as primeiras 3 tropas tem fortificação x2 pois adicionam mais dados
                     fortification = 0.0
+                    moviments = []
                     for border in regionState.borders:  # noqa: E501
+                        #caso aliado
                         if self.is_mine(border):
                             # Calcula fortificação
                             fortification += float(border.troops) / 2
                             # Criando possíveis alternativas e restrições
                             if regionState.troops > 1:
                                 moviments.append(
-                                    (regionState, border, (1, regionState.troops - 1))
+                                    (regionState, border, (1, regionState.troops))
                                 )
+                        #caso inimigo
                         else:
                             fortification -= border.troops
-                    regionFortification[regionPosition] += fortification
-                    fit_value = [
-                        self.fit(
-                            movement[0], movement[1], movement[2], regionFortification
+                    neighboorFortification[regionPosition] += fortification
+                    local_moves = [
+                        self.move_fit(
+                            movement[0], movement[1], movement[2], neighboorFortification
                         )
                         for movement in moviments
                     ]
-                    if len(fit_value) > 0:
-                        best_moviment = fit_value[0]
-                        for movement in fit_value:
+                    if len(local_moves) > 0:
+                        best_moviment = local_moves[0]
+                        for movement in local_moves:
                             if best_moviment[3] > movement[3]:
                                 best_moviment = movement
                         best_moviments.append(best_moviment)
-                    moviments = []
+                        print('move added:',best_moviment[0].name,best_moviment[2],best_moviment[1].name)
 
             chosen_movements = sorted(best_moviments, key=lambda x: x[3], reverse=True)
-            chosen_movements = chosen_movements[-self.range_random() :]
-            for best_moviment in chosen_movements:
-                if best_moviment[2] > 0:
-                    best_moviment_text = (
-                        best_moviment[0].name
-                        + " -("
-                        + str(best_moviment[2])
-                        + ")-> "
-                        + best_moviment[1].name
-                    )
-                print(best_moviment_text)
+            print('chosen movements:',chosen_movements)
+            chosen_movements = chosen_movements[:self.range_random()]
+            for el in chosen_movements:
+                if el[2] > 0:
+                    print(el[0].name," -(",str(el[2]),")-> ",el[1].name)
             self.iteration -= 1
         else:
             self.iteration = self.range_random()
@@ -167,42 +161,42 @@ class Player:
 
         print(best_moviment_text)
 
-    def fit(
+    def move_fit(
         self,
         stateOrigin: RegionState,
-        stateDestiny: RegionState,
+        stateDestination: RegionState,
         troop_range: tuple[int, int],
         fortification: np.ndarray,
     ):
-        best_fit = 0
+        best_fit = -9999
         best_troop = 0
-
-        for troop in troop_range:
+        print('troop_Range',troop_range)
+        for troop in range(*troop_range):
             """Calcula a origem e destino das tropas e respectivos valores pensando mais as 3 primeiras tropas"""
             origin_troops = stateOrigin.troops - troop
-            destiny_troops = stateDestiny.troops - troop
-            origin_fit = (
+            destination_troops = stateDestination.troops - troop
+            origin_fortification = (
                 float(min(origin_troops, 3)) * 2.0
                 + float(max(origin_troops - 3, 0))
                 + fortification[stateOrigin.idx]
             )
-            destiny_fit = (
-                float(min(destiny_troops, 3)) * 2.0
-                + float(max(destiny_troops - 3, 0))
-                + fortification[stateDestiny.idx]
+            destination_fortification = (
+                float(min(destination_troops, 3)) * 2.0
+                + float(max(destination_troops - 3, 0))
+                + fortification[stateDestination.idx]
             )
 
             fit = (
-                stateOrigin.default_weight * origin_fit
-                + stateDestiny.default_weight * destiny_fit
+                stateOrigin.default_weight * origin_fortification
+                + stateDestination.default_weight * destination_fortification
             )
 
             if fit > best_fit:
                 best_fit = fit
                 best_troop = troop
-        if stateDestiny.army.tag == self.my_objective.army.name:
+        if stateDestination.army.tag == self.my_objective.army.name:
             best_fit *= 1.5
-        solution = (stateOrigin, stateDestiny, best_troop, best_fit)
+        solution = (stateOrigin, stateDestination, best_troop, best_fit)
         return solution
 
 

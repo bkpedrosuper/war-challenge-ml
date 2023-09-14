@@ -34,7 +34,7 @@ class Player:
             i +=1
         return i
 
-    def divide_and_conquer(self, data):
+    def divide_and_conquer(self, data,debug=False):
         self.worldState.update(data[0])
         conquer = []
         flag = 0
@@ -62,40 +62,42 @@ class Player:
                             Ally_power += search_Ally_Ally.troops
 
                     for search_Enemy in self.worldState.getRegionState()[flag].borders:
-                        if (search_Enemy.troops > Search_Ally.troops - 2):
-                            continue
-
-                        #print("####Enemy ", search_Enemy.name)
-                        if search_Enemy.army.tag != self.army.tag:
-                            # print("Entrou 4")
-                            Enemy_power: float = 0.0
-                            Weight_flag = 0
-                            for Enemy in self.worldState.getRegionState()[
-                                search_Enemy.idx
-                            ].borders:  # noqa: E501
-                                if Enemy.army.tag == self.army.tag:
+                        if (search_Enemy.troops <= Search_Ally.troops - 2):
+                            #print("####Enemy ", search_Enemy.name)
+                            if search_Enemy.army.tag != self.army.tag:
+                                # print("Entrou 4")
+                                Enemy_power: float = 0.0
+                                Weight_flag = 0
+                                for Enemy in self.worldState.getRegionState()[
+                                    search_Enemy.idx
+                                ].borders:  # noqa: E501
+                                    if Enemy.army.tag == self.army.tag:
+                                        Weight_flag += 1
+                                        continue
+                                    Enemy_power += Enemy.troops
                                     Weight_flag += 1
-                                    continue
-                                Enemy_power += Enemy.troops
-                                Weight_flag += 1
-                                # print(Enemy_power)
-                            fit_value = (Ally_power + Search_Ally.troops) * 0.5 - (
-                                (Enemy_power + search_Enemy.troops) * 0.5
-                            ) / Weights[Weight_flag][
-                                1
-                            ]  # noqa: E501
-                            conquer.append((Search_Ally.name, search_Enemy.name, fit_value)) # type: ignore # noqa: E501
-                            #print("Enemy Power ", Enemy_power)
+                                    # print(Enemy_power)
+                                fit_value = (Ally_power + Search_Ally.troops) * 0.5 - (
+                                    (Enemy_power + search_Enemy.troops) * 0.5
+                                ) / Weights[Weight_flag][
+                                    1
+                                ]  # noqa: E501
+                                if search_Enemy.army.tag == self.my_objective.army.value.tag:
+                                    fit_value *=1.5
+                                conquer.append((Search_Ally.name, search_Enemy.name, fit_value)) # type: ignore # noqa: E501
+                                #print("Enemy Power ", Enemy_power)
                 flag += 1
+            if debug is True:
+                print(conquer)
             if len(conquer) ==0:
                 print('finaliza ataque')
             else:
                 best = conquer[0]
                 for elemento in conquer:
                     if elemento[2] > best[2]:
-                        elemento = best
+                        best = elemento
                 self.iteration -=1
-                print(best[0] + ' ataca ' +best[1])
+                print(best[0] + ' ataca ' +best[1], '(fit value = ',best[2],')')
         else:
             self.iteration = self.range_random()
             print('finaliza ataque')
@@ -110,6 +112,7 @@ class Player:
         """Calculo da defesa dos territórios"""
         # Buscamos territórios que são nossos aliados
         best_moviment_text = ''
+        best_moviments = []
         # Calculo das fortificações e dos movimentos
         if self.iteration > 0:
             moviments = []
@@ -120,27 +123,30 @@ class Player:
                     fortification = float(regionState.troops)
                     for border in regionState.borders:  # noqa: E501
                         if self.is_mine(border):
-                            # print("Entrou 3")
+                            # Calcula fortificação
                             fortification += float(border.troops) / 2
                             # Criando possíveis alternativas e restrições
                             if regionState.troops > 1:
                                 moviments.append(
                                     (regionState, border, (1, regionState.troops - 1))
                                 )
-
                         else:
                             fortification -= border.troops
                     regionFortification[regionPosition] += fortification
+                    fit_value = [self.fit(movement[0], movement[1], movement[2], regionFortification) for movement in moviments]
+                    if len(fit_value) >0:
+                        best_moviment = fit_value[0]
+                        for movement in fit_value:
+                            if best_moviment[3] > movement[3]:
+                                best_moviment = movement
+                        best_moviments.append(best_moviment)
+                    moviments = []
 
-            best_moviments = [
-                self.fit(movement[0], movement[1], movement[2], regionFortification)
-                for movement in moviments
-            ]
-            best_moviment = best_moviments[0]
-            for movement in best_moviments:
-                if movement[3] > best_moviment[3]:
-                    best_moviment = movement
-            best_moviment_text = best_moviment[0].name + ' -('+str(best_moviment[2]) + ')-> ' + best_moviment[1].name
+            chosen_movements = sorted(best_moviments,key=lambda x: x[3],reverse=True)
+            chosen_movements = chosen_movements[-self.range_random():]
+            for best_moviment in chosen_movements:
+                best_moviment_text = best_moviment[0].name + ' -('+str(best_moviment[2]) + ')-> ' + best_moviment[1].name
+                print(best_moviment_text)
             self.iteration -=1
         else:
             self.iteration = self.range_random()
@@ -154,7 +160,7 @@ class Player:
         stateDestiny: RegionState,
         troop_range: tuple[int, int],
         fortification: np.ndarray,
-    ):
+    )->tuple[RegionState,RegionState,int,int]:
         best = 0
         best_troop = 0
         for troop in troop_range:

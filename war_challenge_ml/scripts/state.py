@@ -47,22 +47,7 @@ class WorldState:
     def update(self, computer_vision_data):
         for regionState in self.getRegionState():
             for elemento in computer_vision_data:
-                # print(
-                #     "el[0] ",
-                #     elemento[0],
-                #     "st ",
-                #     regionState,
-                #     "regionState name ",
-                #     regionState.name,
-                # )
                 region = elemento[0]
-                # print(
-                #     "regionState name ",
-                #     regionState.name,
-                #     "type ",
-                #     type(regionState.name),
-                # )
-                # print("region", region, "type", type(region))
                 if regionState.name == region.name:
                     troops = elemento[1]
                     color = elemento[2]

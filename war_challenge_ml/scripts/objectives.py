@@ -46,7 +46,7 @@ class ObjectiveData:
     def __init__(
         self,
         conquertype: Conquer,
-        army: Army | None = None,
+        army = Army.NONE,
         continents: list[Continent] = [],
         regions: list[Region] = [],
         territory_count: int = 0,

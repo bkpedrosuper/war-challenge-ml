@@ -31,23 +31,22 @@ class Player:
         i = 0
         while pivot > random.random():
             pivot *= 0.9
-            i +=1
+            i += 1
         return i
 
-    def divide_and_conquer(self, data,debug=False):
+    def divide_and_conquer(self, data, debug=False):
         self.worldState.update(data[0])
         conquer = []
         flag = 0
         Generate_weights = generate_base_weights(self.my_objective)
         Weights = list(zip(Region, Generate_weights))
-        action = ''
-        
-        if self.iteration >0:
+        action = ""
+
+        if self.iteration > 0:
             # generate_base_weights(my_objective.value)
             for Search_Ally in self.worldState.getRegionState():
                 # print(flag)
                 # print(Search_Ally.army.tag,'',self.army.tag)
-                
 
                 if (
                     Search_Ally.army.tag == self.army.tag and Search_Ally.troops > 1
@@ -62,8 +61,8 @@ class Player:
                             Ally_power += search_Ally_Ally.troops
 
                     for search_Enemy in self.worldState.getRegionState()[flag].borders:
-                        if (search_Enemy.troops <= Search_Ally.troops - 2):
-                            #print("####Enemy ", search_Enemy.name)
+                        if search_Enemy.troops <= Search_Ally.troops - 2:
+                            # print("####Enemy ", search_Enemy.name)
                             if search_Enemy.army.tag != self.army.tag:
                                 # print("Entrou 4")
                                 Enemy_power: float = 0.0
@@ -82,26 +81,23 @@ class Player:
                                 ) / Weights[Weight_flag][
                                     1
                                 ]  # noqa: E501
-                                if search_Enemy.army.tag == self.my_objective.army.value.tag:
-                                    fit_value *=1.5
-                                conquer.append((Search_Ally.name, search_Enemy.name, fit_value)) # type: ignore # noqa: E501
-                                #print("Enemy Power ", Enemy_power)
+                                conquer.append((Search_Ally.name, search_Enemy.name, fit_value))  # type: ignore # noqa: E501
+                                # print("Enemy Power ", Enemy_power)
                 flag += 1
             if debug is True:
                 print(conquer)
-            if len(conquer) ==0:
-                print('finaliza ataque')
+            if len(conquer) == 0:
+                print("finaliza ataque")
             else:
                 best = conquer[0]
                 for elemento in conquer:
                     if elemento[2] > best[2]:
                         best = elemento
-                self.iteration -=1
-                print(best[0] + ' ataca ' +best[1], '(fit value = ',best[2],')')
+                self.iteration -= 1
+                print(best[0] + " ataca " + best[1], "(fit value = ", best[2], ")")
         else:
             self.iteration = self.range_random()
-            print('finaliza ataque')
-
+            print("finaliza ataque")
 
     def is_mine(self, regionState: RegionState):
         """Verifica se um território é meu"""
@@ -111,17 +107,21 @@ class Player:
     def move(self):
         """Calculo da defesa dos territórios"""
         # Buscamos territórios que são nossos aliados
-        best_moviment_text = ''
+        best_moviment_text = ""
         best_moviments = []
         # Calculo das fortificações e dos movimentos
         if self.iteration > 0:
             moviments = []
-            regionFortification = np.array([0.0 for _ in range(self.worldState.worldLen)])
-            for regionPosition, regionState in enumerate(self.worldState.getRegionState()):
+            regionFortification = np.array(
+                [0.0 for _ in range(self.worldState.worldLen)]
+            )
+            for regionPosition, regionState in enumerate(
+                self.worldState.getRegionState()
+            ):
                 if self.is_mine(regionState):
                     # print(Search_Ally.name)
-                    #Calcula a fortificação base, as primeiras 3 tropas tem fortificação x2 pois adicionam mais dados
-                    fortification = float(min(regionState.troops,3))*2.0 + float(max(regionState.troops-3,0))
+                    # Calcula a fortificação base, as primeiras 3 tropas tem fortificação x2 pois adicionam mais dados
+                    fortification = 0.0
                     for border in regionState.borders:  # noqa: E501
                         if self.is_mine(border):
                             # Calcula fortificação
@@ -134,8 +134,13 @@ class Player:
                         else:
                             fortification -= border.troops
                     regionFortification[regionPosition] += fortification
-                    fit_value = [self.fit(movement[0], movement[1], movement[2], regionFortification) for movement in moviments]
-                    if len(fit_value) >0:
+                    fit_value = [
+                        self.fit(
+                            movement[0], movement[1], movement[2], regionFortification
+                        )
+                        for movement in moviments
+                    ]
+                    if len(fit_value) > 0:
                         best_moviment = fit_value[0]
                         for movement in fit_value:
                             if best_moviment[3] > movement[3]:
@@ -143,16 +148,22 @@ class Player:
                         best_moviments.append(best_moviment)
                     moviments = []
 
-            chosen_movements = sorted(best_moviments,key=lambda x: x[3],reverse=True)
-            chosen_movements = chosen_movements[-self.range_random():]
+            chosen_movements = sorted(best_moviments, key=lambda x: x[3], reverse=True)
+            chosen_movements = chosen_movements[-self.range_random() :]
             for best_moviment in chosen_movements:
                 if best_moviment[2] > 0:
-                    best_moviment_text = best_moviment[0].name + ' -('+str(best_moviment[2]) + ')-> ' + best_moviment[1].name
+                    best_moviment_text = (
+                        best_moviment[0].name
+                        + " -("
+                        + str(best_moviment[2])
+                        + ")-> "
+                        + best_moviment[1].name
+                    )
                 print(best_moviment_text)
-            self.iteration -=1
+            self.iteration -= 1
         else:
             self.iteration = self.range_random()
-            best_moviment_text = 'finaliza movimentação'
+            best_moviment_text = "finaliza movimentação"
 
         print(best_moviment_text)
 
@@ -162,22 +173,36 @@ class Player:
         stateDestiny: RegionState,
         troop_range: tuple[int, int],
         fortification: np.ndarray,
-    )->tuple[RegionState,RegionState,int,int]:
-        best = 0
+    ):
+        best_fit = 0
         best_troop = 0
-        for troop in troop_range:
-            term1 = stateOrigin.default_weight * (
-                fortification[stateOrigin.idx] - troop
-            )
-            term2 = stateDestiny.default_weight * (
-                fortification[stateDestiny.idx] + troop
-            )
-            fit = term1 + term2
-            if fit > best:
-                best = fit
-                best_troop = troop
 
-        solution = (stateOrigin, stateDestiny, best_troop, best)
+        for troop in troop_range:
+            """Calcula a origem e destino das tropas e respectivos valores pensando mais as 3 primeiras tropas"""
+            origin_troops = stateOrigin.troops - troop
+            destiny_troops = stateDestiny.troops - troop
+            origin_fit = (
+                float(min(origin_troops, 3)) * 2.0
+                + float(max(origin_troops - 3, 0))
+                + fortification[stateOrigin.idx]
+            )
+            destiny_fit = (
+                float(min(destiny_troops, 3)) * 2.0
+                + float(max(destiny_troops - 3, 0))
+                + fortification[stateDestiny.idx]
+            )
+
+            fit = (
+                stateOrigin.default_weight * origin_fit
+                + stateDestiny.default_weight * destiny_fit
+            )
+
+            if fit > best_fit:
+                best_fit = fit
+                best_troop = troop
+        if stateDestiny.army.tag == self.my_objective.army.name:
+            best_fit *= 1.5
+        solution = (stateOrigin, stateDestiny, best_troop, best_fit)
         return solution
 
 

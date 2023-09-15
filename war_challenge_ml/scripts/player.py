@@ -118,7 +118,7 @@ class Player:
                 regionState.neighboorhood_fortification += float(border.troops) / 2
                 # Criando possíveis alternativas e restrições
                 if regionState.troops > 1:
-                    moviments.append(regionState)
+                    moviments.append(border)
             #caso inimigo
             else:
                 regionState.neighboorhood_fortification -= border.troops
@@ -139,35 +139,41 @@ class Player:
         for regionState in self.worldState.getRegionState():
             if self.is_mine(regionState):
                 moviments = self.fortification_and_movimentation(regionState)
-                n = regionState.troops-1
-                def func(x:list[float],args:tuple[RegionState,int]):
-                    regionState,n  = args
-                    pivot, n_troops = self.decode(x,n)
-                    fit = 0.0
-                    # n_troops = []
-                    # pivot = n
-                    # '''decode'''
-                    # for x in X:
-                    #     aux = math.floor(pivot*x) if pivot >0 else 0
-                    #     n_troops.append(aux)
-                    #     pivot -= aux
-                    origin_fort = regionState.troops - n + pivot
-                    origin_fort = min(origin_fort,3)*2.0 + max(origin_fort-3,0)
-                    fit +=  origin_fort + regionState.neighboorhood_fortification
-                    for troop,neighboor in zip(n_troops,moviments):
-                        destination_fort = neighboor.troops + troop
-                        destination_fort = min(destination_fort,3)*2.0 + max(destination_fort-3,0)
-                        fit += destination_fort + neighboor.neighboorhood_fortification
-                    return fit
-                
-                print('func(0)=',func([0.0 for _ in range(len(moviments))],(regionState,n)))
-                bounds = [(0,1) for _ in range(len(moviments))]
-                result = differential_evolution(func,bounds=bounds,args=(regionState,n))
-                print('result:',result,type(result))
-                pivot,best_troops = self.decode(result.x,n)
-                for best_troop, neighboor in zip(best_troops,moviments):
-                    if pivot != n:
-                        print(regionState.name," -(",str(best_troop),")-> ",neighboor.name)
+                if len(moviments)>0:
+                    n = regionState.troops-1
+                    def func(x:list[float],regionState:RegionState, n:int):
+                        pivot, n_troops = self.decode(x,n)
+                        fit = 0.0
+                        # n_troops = []
+                        # pivot = n
+                        # '''decode'''
+                        # for x in X:
+                        #     aux = math.floor(pivot*x) if pivot >0 else 0
+                        #     n_troops.append(aux)
+                        #     pivot -= aux
+                        origin_fort = regionState.troops - n + pivot
+                        origin_fort = min(origin_fort,3)*2.0 + max(origin_fort-3,0)
+                        fit +=  origin_fort + regionState.neighboorhood_fortification
+                        for troop,neighboor in zip(n_troops,moviments):
+                            destination_fort = neighboor.troops + troop
+                            destination_fort = min(destination_fort,3)*2.0 + max(destination_fort-3,0)
+                            fit += destination_fort + neighboor.neighboorhood_fortification
+                        fit *= -1
+                        return fit
+
+                    bounds = [(0.0,1.0) for _ in range(len(moviments))]
+                    args = (regionState,n)
+                    result = differential_evolution(func,bounds=bounds,args=args)
+                    if debug is True:
+                        print('bounds=',bounds)
+                        print('type(args)',type(args))
+                        print('decode(0.5)=',self.decode([0.5 for _ in range(len(moviments))],n))
+                        print('func(0.5)=',func([0.5 for _ in range(len(moviments))], regionState, n))
+                        print('result:',result,type(result))
+                    pivot,best_troops = self.decode(result.x,n)
+                    for best_troop, neighboor in zip(best_troops,moviments):
+                        if best_troop >0:
+                            print(regionState.name," -(",str(best_troop),")-> ", neighboor.name)
         print('finaliza movimentação')
 
 

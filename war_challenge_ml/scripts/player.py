@@ -77,11 +77,11 @@ class Player:
                                     Enemy_power += Enemy.troops
                                     Weight_flag += 1
                                     # print(Enemy_power)
-                                fit_value = (Ally_power + Search_Ally.troops) * 0.5 - (
+                                fit_value = ((Ally_power + Search_Ally.troops) * 0.5 - (
                                     (Enemy_power + search_Enemy.troops) * 0.5
                                 ) / Weights[Weight_flag][
                                     1
-                                ]  # noqa: E501
+                                ])  # noqa: E501
                                 conquer.append((Search_Ally.name, search_Enemy.name, fit_value))  # type: ignore # noqa: E501
                                 # print("Enemy Power ", Enemy_power)
                 flag += 1

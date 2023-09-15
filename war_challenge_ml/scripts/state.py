@@ -1,4 +1,4 @@
-from war_challenge_computer_vision.regions.regions import Region, RegionData
+from war_challenge_computer_vision.regions.regions import Region, RegionData, Continent, ContinentData
 from scripts.army import Army, ArmyData, armydict
 from scripts.objectives import Objective, ObjectiveData, Conquer, ConquerData
 
@@ -30,6 +30,7 @@ class RegionState:
 
 class WorldState:
     regionDict: dict[str, RegionState]
+    continentConquerPercent: dict[str, float]
 
     def __init__(self) -> None:
         self.regionDict = {
@@ -37,12 +38,25 @@ class WorldState:
         }
         self.set_borders()
         self.worldLen = self.regionDict.__len__()
+        self.continentConquerPercent = {
+            continent.name: 0.0 for continent in Continent
+        }
 
     def set_borders(self):
         for regionState in self.regionDict.values():
             regionState.borders = [
                 self.regionDict[border.name] for border in regionState.value.borders
             ]
+
+    def set_continentConquerPercentual(self,army:ArmyData):
+        print('comecoooo')
+        for regionState in self.getRegionState():
+            if regionState.army.tag == army.tag:
+                print('entrooooo')
+                self.continentConquerPercent[regionState.value.continent.name] +=1.0
+        for continent in Continent:
+            self.continentConquerPercent[continent.name] /= continent.value.qtd_regions
+        
 
     def set_default_weights(self, weigths: list[float]):
         """Given a list of weights, set regionState default_weight based on idx"""

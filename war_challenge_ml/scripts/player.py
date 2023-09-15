@@ -110,18 +110,19 @@ class Player:
     def fortification_and_movimentation(self,regionState:RegionState)->list[RegionState]:
         '''Define a fortificação da vizinhança e retorna os movimentos possiveis'''
         moviments = []
-        regionState.neighboorhood_fortification = 0.0
+        regionState.ally_troops = 0.0
+        regionState.enemy_troops = 0.0
         for border in regionState.borders:  # noqa: E501
             #caso aliado
             if self.is_mine(border):
                 # Calcula fortificação
-                regionState.neighboorhood_fortification += float(border.troops) / 2
+                regionState.ally_troops += float(border.troops) / 2
                 # Criando possíveis alternativas e restrições
                 if regionState.troops > 1:
                     moviments.append(border)
             #caso inimigo
             else:
-                regionState.neighboorhood_fortification -= border.troops
+                regionState.enemy_troops += border.troops
         return moviments
     
     def decode(self,X,n)->tuple[int,list[int]]:
@@ -134,31 +135,29 @@ class Player:
             pivot -= aux
         return pivot, n_troops
 
-    def optimized_move(self,debug=False):
+    def optimized_move(self,data,debug=False):
+        self.worldState.update(data[0])
         """Calculo da defesa dos territórios"""
         for regionState in self.worldState.getRegionState():
             if self.is_mine(regionState):
                 moviments = self.fortification_and_movimentation(regionState)
+                #print(moviments)
                 if len(moviments)>0:
                     n = regionState.troops-1
+                    print('func')
                     def func(x:list[float],regionState:RegionState, n:int):
                         pivot, n_troops = self.decode(x,n)
                         fit = 0.0
-                        # n_troops = []
-                        # pivot = n
-                        # '''decode'''
-                        # for x in X:
-                        #     aux = math.floor(pivot*x) if pivot >0 else 0
-                        #     n_troops.append(aux)
-                        #     pivot -= aux
-                        origin_fort = regionState.troops - n + pivot
-                        origin_fort = min(origin_fort,3)*2.0 + max(origin_fort-3,0)
-                        fit +=  origin_fort + regionState.neighboorhood_fortification
+                        origin_fort = regionState.get_fortification(-(-n+pivot))
+                        fit +=  origin_fort
+                        print(regionState.name,'-> ', end=' ')
                         for troop,neighboor in zip(n_troops,moviments):
-                            destination_fort = neighboor.troops + troop
-                            destination_fort = min(destination_fort,3)*2.0 + max(destination_fort-3,0)
-                            fit += destination_fort + neighboor.neighboorhood_fortification
+                            self.fortification_and_movimentation(neighboor)
+                            destination_fort = neighboor.get_fortification(troop)
+                            fit += destination_fort
+                            print(troop,neighboor.name,end=', ')
                         fit *= -1
+                        print(',fit:',fit)
                         return fit
 
                     bounds = [(0.0,1.0) for _ in range(len(moviments))]
@@ -177,7 +176,8 @@ class Player:
         print('finaliza movimentação')
 
 
-    def move(self,debug=False):
+    def move(self,data,debug=False):
+        self.worldState.update(data[0])
         """Calculo da defesa dos territórios"""
         # Buscamos territórios que são nossos aliados
         best_moviment_text = ""

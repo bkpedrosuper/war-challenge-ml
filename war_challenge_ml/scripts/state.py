@@ -22,8 +22,8 @@ class RegionState:
 
     def get_fortification(self,troop_variation=0)->float:
         new_troops = self.troops + troop_variation
-        ally_fortification = min(new_troops,3)*2.0 + max(new_troops-3,0) + 0.5*self.ally_troops
-        fortification = ally_fortification - self.enemy_troops
+        ally_fortification = min(new_troops,3)*2.0 + max(new_troops-3,0) + 0.4*self.ally_troops
+        fortification = (ally_fortification - self.enemy_troops)/ally_fortification
         return fortification
 
 

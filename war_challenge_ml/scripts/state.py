@@ -17,6 +17,7 @@ class RegionState:
         self.troops = troops
         self.borders = borders
         self.default_weight = -99999.9
+        self.neighboorhood_fortification = 0.0
 
 
 

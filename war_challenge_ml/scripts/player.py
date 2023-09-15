@@ -42,7 +42,6 @@ class Player:
         flag = 0
         Generate_weights = generate_base_weights(self.my_objective)
         Weights = list(zip(Region, Generate_weights))
-        action = ""
 
         if self.iteration > 0:
             # generate_base_weights(my_objective.value)
@@ -143,21 +142,25 @@ class Player:
                 moviments = self.fortification_and_movimentation(regionState)
                 #print(moviments)
                 if len(moviments)>0:
-                    n = regionState.troops-1
-                    print('func')
+                    n = regionState.troops
+                    if self.my_objective.conquertype.name == Objective.CONQUER_18_TERRITORIES_2_TROOPS.name:
+                        n = max(n-2,0)
+                    else:
+                        n -=1
+                    #print('func')
                     def func(x:list[float],regionState:RegionState, n:int):
                         pivot, n_troops = self.decode(x,n)
                         fit = 0.0
                         origin_fort = regionState.get_fortification(-(-n+pivot))
                         fit +=  origin_fort
-                        print(regionState.name,'-> ', end=' ')
+                        #print(regionState.name,'-> ', end=' ')
                         for troop,neighboor in zip(n_troops,moviments):
                             self.fortification_and_movimentation(neighboor)
                             destination_fort = neighboor.get_fortification(troop)
                             fit += destination_fort
-                            print(troop,neighboor.name,end=', ')
+                            #print(troop,neighboor.name,end=', ')
                         fit *= -1
-                        print(',fit:',fit)
+                        #print(',fit:',fit)
                         return fit
 
                     bounds = [(0.0,1.0) for _ in range(len(moviments))]

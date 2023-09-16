@@ -22,8 +22,13 @@ class RegionState:
 
     def get_fortification(self,troop_variation=0)->float:
         new_troops = self.troops + troop_variation
-        ally_fortification = min(new_troops,3)*2.0 + max(new_troops-3,0) + 0.4*self.ally_troops
-        fortification = self.default_weight*((ally_fortification - self.enemy_troops)/ally_fortification)
+        ally_fortification = 0.0
+        if self.enemy_troops > 0:
+            ally_fortification = min(new_troops,3)*2.0 + max(new_troops-3,0) + 0.4*self.ally_troops
+        else:
+            ally_fortification = min(new_troops,3)+ max(new_troops-3,0) + 0.4*self.ally_troops
+        fortification = ((ally_fortification - self.enemy_troops)/ally_fortification)
+        fortification += self.default_weight*fortification
         return fortification
 
 
@@ -48,14 +53,14 @@ class WorldState:
                 self.regionDict[border.name] for border in regionState.value.borders
             ]
 
-    def set_continentConquerPercentual(self,army:ArmyData):
-        print('comecoooo')
-        for regionState in self.getRegionState():
-            if regionState.army.tag == army.tag:
-                print('entrooooo')
-                self.continentConquerPercent[regionState.value.continent.name] +=1.0
-        for continent in Continent:
-            self.continentConquerPercent[continent.name] /= continent.value.qtd_regions
+    # def set_continentConquerPercentual(self,army:ArmyData):
+    #     print('comecoooo')
+    #     for regionState in self.getRegionState():
+    #         if regionState.army.tag == army.tag:
+    #             print('entrooooo')
+    #             self.continentConquerPercent[regionState.value.continent.name] +=1.0
+    #     for continent in Continent:
+    #         self.continentConquerPercent[continent.name] /= continent.value.qtd_regions
         
 
     def set_default_weights(self, weigths: list[float]):

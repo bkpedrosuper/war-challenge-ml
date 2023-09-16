@@ -93,40 +93,37 @@ def generate_base_weights(my_objective: ObjectiveData):
     match my_objective.conquertype.name:
         case Conquer.CONTINENT.name:
             for region in Region:
-                if region in my_objective.bridges:
-                    weights[region.value.idx] += 0.2
+                weights[region.value.idx] = region.value.importance
                 if region.value.continent in my_objective.continents:
-                    weights[region.value.idx] += 0.7
+                    weights[region.value.idx] *= 1.5
                 else:
                     for border in region.value.borders:
                         if border.value.continent in my_objective.continents:
-                            weights[region.value.idx] += 0.3
-                            break
+                            weights[region.value.idx] += 0.3*border.value.importance
+                            
         case Conquer.CONTINENT_PLUS_ONE.name:
             for region in Region:
-                if region in my_objective.bridges:
-                    weights[region.value.idx] += 0.2
+                weights[region.value.idx] = region.value.importance
                 if region.value.continent in my_objective.continents:
-                    weights[region.value.idx] += 0.8
+                    weights[region.value.idx] *= 1.5
                 else:
                     for border in region.value.borders:
                         if border.value.continent in my_objective.continents:
-                            weights[region.value.idx] += 0.5
-                            break
+                            weights[region.value.idx] *= 1.25
 
         case Conquer.TERRITORY.name:
             weights = [
-                0.7 if region in my_objective.bridges else 0.5 for region in Region
+               region.value.importance for region in Region
             ]
 
         case Conquer.TERRITORY_AND_OCCUPATION.name:
             weights = [
-                0.7 if region in my_objective.bridges else 0.5 for region in Region
+               region.value.importance for region in Region
             ]
 
         case Conquer.ARMY.name:
             weights = [
-                0.7 if region in my_objective.bridges else 0.5 for region in Region
+               region.value.importance for region in Region
             ]
 
         case _:

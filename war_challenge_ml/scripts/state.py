@@ -4,7 +4,7 @@ from scripts.objectives import Objective, ObjectiveData, Conquer, ConquerData
 
 class RegionState:
     army: ArmyData
-    region: RegionData
+    value: RegionData
     borders: list["RegionState"]
 
     def __init__(
@@ -54,10 +54,10 @@ class WorldState:
             ]
 
     def set_continentConquerPercentual(self,army:ArmyData):
-        print('comecoooo')
+        #print('comecoooo')
         for regionState in self.getRegionState():
             if regionState.army.tag == army.tag:
-                print('entrooooo')
+                #print('entrooooo')
                 self.continentConquerPercent[regionState.value.continent.name] +=1.0
         for continent in Continent:
             self.continentConquerPercent[continent.name] /= continent.value.qtd_regions

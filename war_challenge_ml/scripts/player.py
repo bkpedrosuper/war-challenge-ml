@@ -82,7 +82,7 @@ class Player:
                                 1
                             ])  # noqa: E501
                             self.worldState.set_continentConquerPercentual(Search_Ally.army)
-                            fit_value *= self.worldState.continentConquerPercent[Search_Ally.region.continent.name]
+                            fit_value *= self.worldState.continentConquerPercent[Search_Ally.value.continent.name]
                             if search_Enemy.name == self.my_objective.army.name:
                                 fit_value *=1.5
                             conquer.append((Search_Ally.name, search_Enemy.name, fit_value))  # type: ignore # noqa: E501

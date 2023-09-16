@@ -28,7 +28,7 @@ class RegionState:
         else:
             ally_fortification = min(new_troops,3)+ max(new_troops-3,0) + 0.4*self.ally_troops
         fortification = ((ally_fortification - self.enemy_troops)/ally_fortification)
-        fortification += self.default_weight*fortification
+        fortification *= self.default_weight
         return fortification
 
 

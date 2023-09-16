@@ -53,14 +53,14 @@ class WorldState:
                 self.regionDict[border.name] for border in regionState.value.borders
             ]
 
-    # def set_continentConquerPercentual(self,army:ArmyData):
-    #     print('comecoooo')
-    #     for regionState in self.getRegionState():
-    #         if regionState.army.tag == army.tag:
-    #             print('entrooooo')
-    #             self.continentConquerPercent[regionState.value.continent.name] +=1.0
-    #     for continent in Continent:
-    #         self.continentConquerPercent[continent.name] /= continent.value.qtd_regions
+    def set_continentConquerPercentual(self,army:ArmyData):
+        print('comecoooo')
+        for regionState in self.getRegionState():
+            if regionState.army.tag == army.tag:
+                print('entrooooo')
+                self.continentConquerPercent[regionState.value.continent.name] +=1.0
+        for continent in Continent:
+            self.continentConquerPercent[continent.name] /= continent.value.qtd_regions
         
 
     def set_default_weights(self, weigths: list[float]):
